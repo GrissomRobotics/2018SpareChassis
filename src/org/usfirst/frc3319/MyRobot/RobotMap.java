@@ -11,10 +11,7 @@
 
 package org.usfirst.frc3319.MyRobot;
 
-import org.usfirst.frc3319.custom.ADIS16448_IMU;
-import org.usfirst.frc3319.custom.Adis;
 import org.usfirst.frc3319.custom.MecanumPIDGyro;
-import org.usfirst.frc3319.custom.UltrasonicWrapper;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -23,7 +20,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -48,39 +47,25 @@ public class RobotMap {
     public static SpeedController driveTrainLeftRear;
     public static SpeedController driveTrainRightRear;
     public static MecanumDrive driveTrainMecanumDrive;
-	public static Solenoid grab;
-	public static Solenoid release;
-	public static Solenoid gripUp;
-	public static Solenoid gripDown;
-	public static Compressor compressor;
-	public static SpeedController elevator;
-	public static Encoder elevatorEncoder;
-	public static UltrasonicWrapper ultrasonic;
-	public static DigitalOutput ultrasoundSelector;
-	public static DigitalInput limitSwitchUpper;
-	public static DigitalInput limitSwitchLower;
-	public static Adis  gyro;
+	public static ADXRS450_Gyro  gyro;
 	public static PIDController gyroController;
-	public static SpeedController winch;
-	public static SpeedController hook;
-	public static SerialPort arduino;
 	
 
     public static void init() {
         
-        driveTrainLeftFront = new Talon(0);
+        driveTrainLeftFront = new Spark(0);
         ((SendableBase) driveTrainLeftFront).setName("DriveTrain", "leftFront");
         driveTrainLeftFront.setInverted(true);
         
-        driveTrainRightFront = new Talon(1);
+        driveTrainRightFront = new Spark(1);
         ((SendableBase) driveTrainRightFront).setName("DriveTrain", "rightFront");
         driveTrainRightFront.setInverted(false);
         
-        driveTrainLeftRear = new Talon(2);
+        driveTrainLeftRear = new Spark(2);
         ((SendableBase) driveTrainLeftRear).setName("DriveTrain", "leftRear");
         driveTrainLeftRear.setInverted(true);
         
-        driveTrainRightRear = new Talon(3);
+        driveTrainRightRear = new Spark(3);
         ((SendableBase) driveTrainRightRear).setName("DriveTrain", "rightRear");
         driveTrainRightRear.setInverted(false);
         
@@ -91,60 +76,13 @@ public class RobotMap {
         driveTrainMecanumDrive.setSafetyEnabled(true);
         driveTrainMecanumDrive.setExpiration(0.1);
         driveTrainMecanumDrive.setMaxOutput(1.0);
-                
-        //ultraSonicFront = new Ultrasonic(6, 7);
-        //ultraSonicBack = new Ultrasonic(8, 9);
-        //ultraSonic = new UltrasonicWrapper(ultraSonicFront, ultraSonicBack);
+      
         
-        gyro = new Adis();
+        gyro = new  ADXRS450_Gyro();
         ((SendableBase) gyro).setName("DriveTrain","Gyro");
         
         gyroController = new PIDController(0.5, 0, 2.0, gyro, new MecanumPIDGyro(driveTrainMecanumDrive));
         ((SendableBase) gyroController).setName("DriveTrain", "gyroController");
         
-        arduino = new SerialPort(115200,Port.kUSB1);
-        ultrasoundSelector = new DigitalOutput(9);
-        
-        ultrasonic = new UltrasonicWrapper(ultrasoundSelector, arduino);
-        
-        elevator = new Talon (4);
-        ((SendableBase) elevator).setName("Elevator" , "elevator");
-        elevator.setInverted(false);
-        
-        elevatorEncoder = new Encoder(new DigitalInput(0), new DigitalInput(1));
-        ((SendableBase) elevatorEncoder).setName("Elevator", "elevatorEncoder");
-        
-        limitSwitchUpper = new DigitalInput(2);
-        ((SendableBase) limitSwitchUpper).setName("Elevator", "limitSwitchUpper");
-        
-        limitSwitchLower = new DigitalInput(3);
-        ((SendableBase) limitSwitchLower).setName("Elevator", "limitSwitchLower");
-        
-        compressor = new Compressor(0);
-        compressor.setClosedLoopControl(true);
-		
-		grab = new Solenoid(4);
-		((SendableBase) grab).setName("Gripper", "grab");
-		grab.set(false);
-		
-		release = new Solenoid(5);
-		((SendableBase) release).setName("Gripper", "release");
-		release.set(false);
-		
-		gripUp = new Solenoid(6);
-		((SendableBase) gripUp).setName("Gripper", "gripUp");
-		gripUp.set(false);
-		
-		gripDown = new Solenoid(7);
-		((SendableBase) gripDown).setName("Gripper", "gripDown");
-		gripDown.set(false);
-		
-				winch = new Talon(5);
-		((SendableBase) winch).setName("Climber", "winch");
-		winch.setInverted(true);
-		
-		hook = new Talon(6);
-		((SendableBase) winch).setName("Climber", "hook");
-		hook.setInverted(true);
     }
 }

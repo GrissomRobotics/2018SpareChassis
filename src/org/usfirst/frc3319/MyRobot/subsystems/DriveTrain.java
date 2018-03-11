@@ -15,10 +15,6 @@ import java.util.Arrays;
 import org.usfirst.frc3319.MyRobot.Robot;
 import org.usfirst.frc3319.MyRobot.RobotMap;
 import org.usfirst.frc3319.MyRobot.commands.*;
-import org.usfirst.frc3319.custom.ADIS16448_IMU;
-import org.usfirst.frc3319.custom.Adis;
-import org.usfirst.frc3319.custom.UltrasonicWrapper;
-
 import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
@@ -46,50 +42,38 @@ import java.util.regex.*;
 /**
  *
  */
-public class DriveTrain extends PIDSubsystem {
+public class DriveTrain extends Subsystem{
 	private final SpeedController leftFront = RobotMap.driveTrainLeftFront;
     private final SpeedController rightFront = RobotMap.driveTrainRightFront;
     private final SpeedController leftRear = RobotMap.driveTrainLeftRear;
     private final SpeedController rightRear = RobotMap.driveTrainRightRear;
     protected final MecanumDrive mecanumDrive = RobotMap.driveTrainMecanumDrive;
-    private final Adis  gyro = RobotMap.gyro;
+    private final ADXRS450_Gyro  gyro = RobotMap.gyro;
     protected final PIDController gyroController = RobotMap.gyroController;
-    private UltrasonicWrapper ultrasonic = RobotMap.ultrasonic;
 	public double defaultStep = 0.03;
 	double maxPowerPID = 0.4;
 	double maxPowerGyroPID = 0.4;
-	private int driveTolerance = 10;
 	private int gyroTolerance = 2;
 	public double startTime;
 	public double currentTime;
 	public int maxTime = 5000;
-    
-	public DriveTrain() {
-		super("DriveTrain", 0.7,0.0,2.3);
-		setPercentTolerance(driveTolerance); //Set 10% as the tolerance for purposes of driving
-    	getPIDController().setContinuous(false);
-    	setOutputRange(-maxPowerPID, maxPowerPID);
-    	
-    	gyroController.setContinuous(false);
-    	gyroController.setOutputRange(-maxPowerGyroPID, maxPowerGyroPID); //Set turning speed output to be not more than 40% power
-    	gyroController.setAbsoluteTolerance(gyroTolerance); //Set tolerance on the gyro PID for 2 degrees
-    	gyroController.disable();
-     }
 	
 
 
     @Override
     public void initDefaultCommand() {
         setDefaultCommand(new DriveWithJoystick());
+        gyroController.setContinuous(false);
+    	gyroController.setOutputRange(-maxPowerGyroPID, maxPowerGyroPID); //Set turning speed output to be not more than 40% power
+    	gyroController.setAbsoluteTolerance(gyroTolerance); //Set tolerance on the gyro PID for 2 degrees
+    	gyroController.disable();
     }
     
     @Override
     public void periodic() {
 
-    	ultrasonic.readUltrasonicInches();
     	SmartDashboard.putNumber("Robot Heading value", getGyroValue());
     	SmartDashboard.putNumber("Gyro PID power", gyroController.get());
-    	SmartDashboard.putNumber("Ultrasonic reading", getUltrasonicInches());
     }
     
     public void cartesianDrive(double xValue, double yValue, double rotationValue) {
@@ -102,25 +86,12 @@ public class DriveTrain extends PIDSubsystem {
     	rightFront.stopMotor();
     	leftRear.stopMotor();
     	rightRear.stopMotor();
-    	disable();
     	resetGyro();
 
     }
     
-    public boolean getUltrasonicSensor() {
-    	return ultrasonic.getUltrasonicSensor();
-    }
-    
-    public void setUltrasonicSensor(boolean front) {
-    	ultrasonic.setUltrasonicSensor(front);
-    }
-    
-    public long getUltrasonicInches() {
-    	return ultrasonic.getUltraSonic();
-    }
-    
     public double getGyroValue() {
-    	return gyro.getRobotHeading();
+    	return gyro.getAngle();
     }
     
     public void resetGyro() {
@@ -130,27 +101,6 @@ public class DriveTrain extends PIDSubsystem {
     public void calibrateGyro() {
     	gyro.calibrate();
     }
-
-	@Override
-	protected double returnPIDInput() {
-		return ultrasonic.pidGet();
-	}
-
-	@Override
-	protected void usePIDOutput(double output) {
-		if (ultrasonic.getUltrasonicSensor()) {
-			if (ultrasonic.getUltraSonic() < getPIDController().getSetpoint()) {
-				mecanumDrive.driveCartesian(0, -output,0);
-			} else {
-				mecanumDrive.driveCartesian(0, output, 0);
-			}
-		} else {
-			if (ultrasonic.getUltraSonic() < getPIDController().getSetpoint()) {
-				mecanumDrive.driveCartesian(0, -output,0);
-			} else {
-				mecanumDrive.driveCartesian(0, output, 0);
-			}		}
-	}
 	
 	public void setGyroSetpoint(double setpoint) {
 		gyroController.setSetpoint(setpoint);

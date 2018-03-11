@@ -48,11 +48,13 @@ public class AutonomousCommand extends CommandGroup {
     			//Go cross the line, but go the opposite direction of whichever side of the switch is ours
        			addSequential(new DriveByTime(58));
        			if (gameSpecificData.charAt(0)=='L') {
+    				System.out.println("GameSpecificData is L");
        				addSequential(new TurnAngle(90, 3));
        				addSequential(new DriveByTime(87));
        				addSequential(new TurnAngle(-90, 3));
        				addSequential(new DriveByTime(86));
        			} else {
+    				System.out.println("GameSpecificData is R");
        				addSequential(new TurnAngle(-90, 3));
        				addSequential(new DriveByTime(87));
        				addSequential(new TurnAngle(90, 3));
@@ -62,26 +64,22 @@ public class AutonomousCommand extends CommandGroup {
     		case 4: //Starting right inner
     			addSequential(new DriveByTime(107));
     			if (gameSpecificData.charAt(0)=='R') {
+    				System.out.println("GameSpecificData is R");
     				depositAndBackAway();
-    			}
+    				}
     			break;
     		case 5: //Starting left inner
     			addSequential(new DriveByTime(107));
     			if (gameSpecificData.charAt(0)=='L') {
+    				System.out.println("GameSpecificData is L");
     				depositAndBackAway();
     			}
     			break;
-    		case 6:
     	}
     }
     
     private void depositAndBackAway() {
-    	//If this method does not work, copy it and replace every occurence of it with this
-    	addSequential(new SetElevatorSetpoint(OI.SWITCH_HEIGHT));
-		addSequential(new LowerGripper());
-		addSequential(new OpenGripper());
-		addSequential(new RaiseGripper());
+    	addSequential(new Wait(5));
 		addSequential(new DriveByTime(-12));
-		addSequential(new SetElevatorSetpoint(OI.DEFAULT_HEIGHT));
     }
 }
