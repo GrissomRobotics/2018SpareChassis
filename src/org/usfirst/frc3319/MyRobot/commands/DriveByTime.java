@@ -56,6 +56,7 @@ public class DriveByTime extends Command {
     }
     
 	static double calculateTime(double distance) {
-		return (0.000008122 * (Math.pow(distance,2))) + (0.024 * distance) + 0.411;
+		//Reduce by half to deal with smaller practice area
+		return (0.5)*((0.000008122 * (Math.pow(distance,2))) + (0.024 * distance) + 0.411);
 	}
 }
