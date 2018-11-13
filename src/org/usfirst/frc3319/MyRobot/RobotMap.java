@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
@@ -42,47 +43,33 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * floating around.
  */
 public class RobotMap {
-    public static SpeedController driveTrainLeftFront;
-    public static SpeedController driveTrainRightFront;
-    public static SpeedController driveTrainLeftRear;
-    public static SpeedController driveTrainRightRear;
-    public static MecanumDrive driveTrainMecanumDrive;
-	public static ADXRS450_Gyro  gyro;
-	public static PIDController gyroController;
-	
-
+    public static SpeedController driveTrainLeft;
+    public static SpeedController driveTrainRight;
+    public static SpeedController armLift;
+    public static SpeedController armLeft;
+    public static SpeedController armRight;
+    
     public static void init() {
         
-        driveTrainLeftFront = new Spark(0);
-        ((SendableBase) driveTrainLeftFront).setName("DriveTrain", "leftFront");
-        driveTrainLeftFront.setInverted(true);
+        driveTrainLeft = new Spark(0);
+        ((SendableBase) driveTrainLeft).setName("DriveTrain", "leftFront");
+        driveTrainLeft.setInverted(true);
         
-        driveTrainRightFront = new Spark(1);
-        ((SendableBase) driveTrainRightFront).setName("DriveTrain", "rightFront");
-        driveTrainRightFront.setInverted(false);
+        driveTrainRight = new Spark(1);
+        ((SendableBase) driveTrainRight).setName("DriveTrain", "rightFront");
+        driveTrainRight.setInverted(false);
         
-        driveTrainLeftRear = new Spark(2);
-        ((SendableBase) driveTrainLeftRear).setName("DriveTrain", "leftRear");
-        driveTrainLeftRear.setInverted(true);
+        armLift = new Spark(2);
+        ((SendableBase) armLift).setName("Arm","lifter");
+        armLift.setInverted(false);
+	
+        armLift = new Spark(3);
+        ((SendableBase) armLeft).setName("Arm","leftWheel");
+        armLift.setInverted(true);
         
-        driveTrainRightRear = new Spark(3);
-        ((SendableBase) driveTrainRightRear).setName("DriveTrain", "rightRear");
-        driveTrainRightRear.setInverted(false);
-        
-        driveTrainMecanumDrive = new MecanumDrive(driveTrainLeftFront, driveTrainLeftRear,
-              driveTrainRightFront, driveTrainRightRear);
-        
-        ((SendableBase) driveTrainMecanumDrive).setName("DriveTrain", "Mecanum Drive");
-        driveTrainMecanumDrive.setSafetyEnabled(true);
-        driveTrainMecanumDrive.setExpiration(0.1);
-        driveTrainMecanumDrive.setMaxOutput(1.0);
-      
-        
-        gyro = new  ADXRS450_Gyro();
-        ((SendableBase) gyro).setName("DriveTrain","Gyro");
-        
-        gyroController = new PIDController(0.5, 0, 2.0, gyro, new MecanumPIDGyro(driveTrainMecanumDrive));
-        ((SendableBase) gyroController).setName("DriveTrain", "gyroController");
-        
+        armLift = new Spark(4);
+        ((SendableBase) armRight).setName("Arm","rightWheel");
+        armLift.setInverted(false);
+		
     }
 }

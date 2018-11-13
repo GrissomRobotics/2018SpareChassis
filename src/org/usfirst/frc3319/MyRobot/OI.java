@@ -51,34 +51,18 @@ public class OI {
     // button.whenReleased(new ExampleCommand());
 
 
-    public Joystick driveStick;
+    private Joystick driveStick;
+    
     public OI() {
-
-        driveStick = new Joystick(0);
-
-		
-		SmartDashboard.putData("TurnRight90", new TurnAngle(90, 5));
-		SmartDashboard.putData("TurnLeft90", new TurnAngle(-90,5));
-		SmartDashboard.putData("ZeroGyro", new ZeroGyro());
-
-		SmartDashboard.putNumber("Speed Step Drive Train", Robot.DriveTrain.defaultStep);
-		
+    	driveStick = new Joystick(0);
     }
     
-    public double getXValue() {
-    	return driveStick.getX();
+    public double getLeftValue() {
+    	return driveStick.getRawAxis(1);
     }
     
-    public double getYValue() {
-    	return driveStick.getY();
-    }
-    
-    public double getRotationLeft() {
-    	return driveStick.getRawAxis(2);
-    }
-    
-    public double getRotationRight() {
-    	return driveStick.getRawAxis(3);
+    public double getRightValue() {
+    	return driveStick.getRawAxis(5);
     }
 
 }

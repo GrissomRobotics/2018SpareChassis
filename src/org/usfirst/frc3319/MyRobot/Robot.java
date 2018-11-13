@@ -2,6 +2,7 @@ package org.usfirst.frc3319.MyRobot;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
@@ -26,9 +27,6 @@ public class Robot extends TimedRobot {
 
     public static OI oi;
     public static DriveTrain DriveTrain;
-    
-    //private final Ultrasonic ultraSonic = RobotMap.ultraSonicFront;
-
 
     /**
      * This function is run when the robot is first started up and should be
@@ -41,7 +39,6 @@ public class Robot extends TimedRobot {
         //Send the commands and subsystems to the dashboard
         SmartDashboard.putData(DriveTrain);
         SmartDashboard.putData(Scheduler.getInstance());
-        CameraServer.getInstance().startAutomaticCapture();
         
 
         // OI must be constructed after subsystems. If the OI creates Commands
@@ -50,22 +47,6 @@ public class Robot extends TimedRobot {
         // pointers. Bad news. Don't move it.
         oi = new OI();
         
-        Robot.DriveTrain.resetGyro();
-
-        // Add commands to Autonomous Sendable Chooser
-        
-        chooser.addDefault("Autonomous Command Outer Right", 1);
-        chooser.addObject("Autonomous Command Center", 3);
-        chooser.addObject("Autonomous Command Outer Left", 2);
-        chooser.addObject("Autonomous Command Inner Right",4);
-        chooser.addObject("Autonomous Command Inner Left", 5);
-        
-        //The scale autonomous command just goes forward a greater distance
-        chooser.addObject("Autonomous Command Scale", 6);
-        
-
-
-        SmartDashboard.putData("Auto mode", chooser);
     }
 
     /**
@@ -79,18 +60,10 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
-        DriveTrain.resetGyro();
     }
 
     @Override        
     public void autonomousInit() {
-        if (chooser.getSelected() == null) {} //Shouldn't happen, this would happen in the event that SmartDashboard was not initialized
-        else { //we received a request from dashboard, now create the command to match
-            autonomousCommand = new AutonomousCommand(DriverStation.getInstance().getGameSpecificMessage(), (int) chooser.getSelected());
-        }
-    	DriveTrain.resetGyro();
-        // schedule the autonomous command (example)
-        if (autonomousCommand != null) autonomousCommand.start();
     }
 
     /**
@@ -98,7 +71,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
     }
 
     @Override
@@ -108,7 +80,6 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
-        RobotMap.gyroController.disable();
     }
 
     /**
@@ -116,9 +87,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        Scheduler.getInstance().run();
-        
-        //System.out.println("test");
-        //System.out.println(ultraSonic.getRangeInches());
+        Scheduler.getInstance().run(); 
     }
 }

@@ -42,90 +42,30 @@ import java.util.regex.*;
 /**
  *
  */
-public class DriveTrain extends Subsystem{
-	private final SpeedController leftFront = RobotMap.driveTrainLeftFront;
-    private final SpeedController rightFront = RobotMap.driveTrainRightFront;
-    private final SpeedController leftRear = RobotMap.driveTrainLeftRear;
-    private final SpeedController rightRear = RobotMap.driveTrainRightRear;
-    protected final MecanumDrive mecanumDrive = RobotMap.driveTrainMecanumDrive;
-    private final ADXRS450_Gyro  gyro = RobotMap.gyro;
-    protected final PIDController gyroController = RobotMap.gyroController;
-	public double defaultStep = 0.03;
-	double maxPowerPID = 0.4;
-	double maxPowerGyroPID = 0.4;
-	private int gyroTolerance = 2;
-	public double startTime;
-	public double currentTime;
-	public int maxTime = 5000;
+public class DriveTrain extends Subsystem {
+	private final SpeedController left = RobotMap.driveTrainLeft;
+    private final SpeedController right = RobotMap.driveTrainRight;
 	
-
-
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new DriveWithJoystick());
-        gyroController.setContinuous(false);
-    	gyroController.setOutputRange(-maxPowerGyroPID, maxPowerGyroPID); //Set turning speed output to be not more than 40% power
-    	gyroController.setAbsoluteTolerance(gyroTolerance); //Set tolerance on the gyro PID for 2 degrees
-    	gyroController.disable();
+    	setDefaultCommand(new DriveWithJoystick());
     }
     
     @Override
     public void periodic() {
-
-    	SmartDashboard.putNumber("Robot Heading value", getGyroValue());
-    	SmartDashboard.putNumber("Gyro PID power", gyroController.get());
     }
     
-    public void cartesianDrive(double xValue, double yValue, double rotationValue) {
-    	//Negate xValue to resolve strafing direction issue
-    	mecanumDrive.driveCartesian(-xValue, yValue, rotationValue);
+    public void driveLeft(double power) {
+    	left.set(power);
+    }
+    
+    public void driveRight(double power) {
+    	right.set(power);
     }
     
     public void stop() {
-    	leftFront.stopMotor();
-    	rightFront.stopMotor();
-    	leftRear.stopMotor();
-    	rightRear.stopMotor();
-    	resetGyro();
-
+    	left.stopMotor();
+    	right.stopMotor();
     }
-    
-    public double getGyroValue() {
-    	return gyro.getAngle();
-    }
-    
-    public void resetGyro() {
-    	gyro.reset();
-    }
-    
-    public void calibrateGyro() {
-    	gyro.calibrate();
-    }
-	
-	public void setGyroSetpoint(double setpoint) {
-		gyroController.setSetpoint(setpoint);
-	}
-	
-	public double getGyroSetpoint() {
-		return gyroController.getSetpoint();
-	}
-	
-	//Only use for the purpose of turning with the gyro
-	//This will not do anything for any other drive train purpose
-	public void enableGyroController() {
-		gyroController.enable();
-	}
-	
-	public void disableGyroController() {
-		gyroController.disable();
-	}
-	
-	public boolean isGyroControllerOnTarget() {
-		return gyroController.onTarget();
-	}
-	
-	public void setGyroPID(double p, double i, double d) {
-		gyroController.setPID(p, i, d);
-	}
 }
 
